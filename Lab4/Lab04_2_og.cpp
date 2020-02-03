@@ -1,11 +1,5 @@
 // taken from https://github.com/oreillymedia/Learning-OpenCV-3_examples for lab purposes and edited. 
-
-/*
-We, Junsup, Matt, Reza, declare that the attached assignment is our own work in accordance with the Seneca Academic Policy.
-We have not copied any part of this assignment, manually or electronically, from any other source including web sites, unless specified as references.
-We have not distributed our work to other students.
-*/
-
+// Lab4_2 - Junsup Lee
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc.hpp>
 
@@ -16,14 +10,15 @@ void my_mouse_callback(
 );
 
 cv::Rect box;
-bool drawing_box = false;
 
 //used global variables for shape properties for simplicity. 
 cv::RotatedRect rbox;
+cv::Point p1, p2;
+bool drawing_box = false;
 
 //for circle
-int radius;
-cv::Point center;
+int roi_x0 = 0, roi_y0 = 0, roi_x1 = 0, roi_y1 = 0;
+int radius = std::max(abs(box.width), abs(box.height));
 
 //from lab3
 void getColour();
@@ -40,9 +35,7 @@ void draw_box(cv::Mat& img, cv::Rect box, char shape) {
 		
 	switch (shape) {
 	case'c':
-		radius = (sqrt(((box.width*box.width) + (box.height*box.height))) / 2);
-		center = cv::Point((box.tl() + box.br()) / 2);
-		cv::circle(img, center, radius, colour, thickness);
+		cv::circle(img, p1, radius, colour, thickness);
 		break;
 	case'e':
 		cv::ellipse(img, rbox, colour, thickness);
@@ -86,13 +79,6 @@ int main(int argc, char** argv) {
 	cv::namedWindow("Lab4_2");
 	cv::moveWindow("Lab4_2", 10, 30);
 
-	//show baseline + text overlay
-	cv::line(image, textOrg + cv::Point(0, thickness),
-		textOrg + cv::Point(textSize.width, thickness),
-		cv::Scalar(0, 0, 255));
-	cv::putText(image, title, textOrg, fontFace, fontScale,
-		cv::Scalar::all(255), thickness, 8);
-
 	// Here is the crucial moment where we actually install
 	// the callback. Note that we set the value of 'params' to
 	// be the image we are working with so that the callback
@@ -112,6 +98,14 @@ int main(int argc, char** argv) {
 	// then repeat.
 	//
 	for (;;) {
+		
+		//show baseline + text overlay
+		cv::line(image, textOrg + cv::Point(0, thickness),
+			textOrg + cv::Point(textSize.width, thickness),
+			cv::Scalar(0, 0, 255));
+		cv::putText(image, title, textOrg, fontFace, fontScale,
+			cv::Scalar::all(255), thickness, 8);
+
 		image.copyTo(temp);
 
 		if (drawing_box) draw_box(temp, box, shape);
@@ -149,40 +143,30 @@ void my_mouse_callback(int event, int x, int y, int flags, void* param)
 {
 	cv::Mat& image = *(cv::Mat*) param;
 
-	//draw circle while shiftkey is being pressed
 	if (flags & cv::EVENT_FLAG_SHIFTKEY) {
 		switch (event) {
 
 		case cv::EVENT_MOUSEMOVE:
 			if (drawing_box) {
-				box.width = x - box.x;
-				box.height = y - box.y;
+				radius = std::max(abs(p1.x - x), abs(p1.y - y));
 			}
 			break;
 
 		case cv::EVENT_LBUTTONDOWN:
 			drawing_box = true;
-			box = cv::Rect(x, y, 0, 0);
+			p1 = cv::Point(x, y);
 			shape = 'c';
 			break;
 
 		case cv::EVENT_LBUTTONUP:
 			drawing_box = false;
-			if (box.width < 0) {
-
-				box.x += box.width;
-				box.width *= -1;
-			}
-			if (box.height < 0) {
-				box.y += box.height;
-				box.height *= -1;
-			}
+			p2 = cv::Point(x, y);
 			getColour();
 			draw_box(image, box, shape);
 			break;
 		}
 
-	} //draw ellipse while ctrl key is pressed
+	}
 	else if (flags & cv::EVENT_FLAG_CTRLKEY) {
 		switch (event) {
 		case cv::EVENT_MOUSEMOVE:
