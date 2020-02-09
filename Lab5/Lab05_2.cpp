@@ -80,10 +80,10 @@ int main(int argc, char** argv) {
 	//define kernel;
 	Matx<float, 1, 3> horizontalK = { 1,2,1 };
 	Matx<float, 3, 1> verticalK = { 1,2,1 };
-	Matx<float, 3, 3> bilinearK = cv::Matx<float, 3, 3>::all(1 / 16.0f);
+	Matx<float, 3, 3> bilinearK;
 
 	//bilinear kernel is convolving with 2 tent functions
-	bilinearK = bilinearK.mul(verticalK * horizontalK);
+	bilinearK = (1/16.0f) * (verticalK * horizontalK);
 	filter2D(noise, filtered, CV_8U, bilinearK);
 	
 	namedWindow("Filtered", WINDOW_AUTOSIZE);
