@@ -11,9 +11,7 @@ int main(int argc, char** argv) {
 	Mat image, image_rotate, image_resize, image_perspective, M;
 	
 	//homography matrix
-	Matx<double, 3, 3> H = { 0.4, -0.4, 190,
-							0.15, 0.4, 100,
-							0, 0, 1 };
+	Matx<double, 3, 3> H = { 0.4, -0.4, 190, 0.15, 0.4, 100, 0, 0, 1 };
 
 	bool close = false;
 	
@@ -36,7 +34,7 @@ int main(int argc, char** argv) {
 		switch (toupper(option))
 		{
 		case 'R':
-			std::cout << "Please enter the angle you wish to rotate. Insert '-' for counter clockwise: ";
+			std::cout << "Please enter the angle you wish to rotate. Insert '-' for clockwise: ";
 			std::cin >> angle;
 
 			//calculate transformation matrix M for rotation
