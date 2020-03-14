@@ -114,7 +114,7 @@ int main(int argc, char** argv) {
 				}
 
 				cout << "THRESHOLD IS: " << threshold <<
-					" PRECISION: " << precision << " RECALL: " << recall << endl;
+					" PRECISION: " << precision << " RECALL: " << recall << " F1: " << F1 << endl;
 				
 				threshold += 0.1;
 				B = nullptr;
@@ -144,7 +144,8 @@ int main(int argc, char** argv) {
 			if (belong == 1) {
 				F1 = calcFb(precision, recall, 1);
 			}
-			cout << "F1: " << F1 << endl;
+			cout << "THRESHOLD IS: " << threshold <<
+				" PRECISION: " << precision << " RECALL: " << recall  << " F1: " << F1 << endl;
 		}
 		else if (option == 4) {
 			cv::Mat img2, img_gt;
@@ -173,7 +174,7 @@ int main(int argc, char** argv) {
 				}
 
 				cout << "THRESHOLD IS: " << threshold <<
-					" PRECISION: " << precision << " RECALL: " << recall << endl;
+					" PRECISION: " << precision << " RECALL: " << recall << " F1: " << F1 << endl;
 
 				threshold += 25;
 				B = nullptr;
